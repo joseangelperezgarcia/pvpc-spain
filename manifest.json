@@ -1,0 +1,20 @@
+{
+  "domain": "pvpc_spain",
+  "name": "PVPC España",
+  "version": "1.0.0",
+  "documentation": "https://github.com/joangpega/pvpc_spain",
+  "issue_tracker": "https://github.com/joangpega/pvpc_spain/issues",
+  "codeowners": [
+    "@joangpega"
+  ],
+  "config_flow": true,
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "loggers": [
+    "custom_components.pvpc_spain"
+  ],
+  "requirements": [
+    "holidays>=0.40"
+  ],
+  "dependencies": []
+}

@@ -79,7 +79,7 @@ last_update: "2026-01-01T12:00:00"
 4. Introducir:
 
 ```
-https://github.com/TU_USUARIO/pvpc_spain
+https://github.com/@joangpega/pvpc_spain
 ```
 
 5. Seleccionar tipo:

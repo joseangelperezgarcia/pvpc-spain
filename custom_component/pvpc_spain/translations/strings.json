@@ -1,0 +1,25 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "PVPC España",
+        "description": "Configura PVPC España.\nNecesitas un token API para acceder a los datos.",
+        "data": {
+          "zone": "Zone",
+          "token": "API Token"
+        },
+        "data_description": {
+          "zone": "Select the electrical zone",
+          "token": "Enter your API token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to PVPC API",
+      "unknown": "Unknown error"
+    },
+    "abort": {
+      "already_configured": "This zone is already configured"
+    }
+  }
+}

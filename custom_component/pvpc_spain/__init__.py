@@ -10,7 +10,6 @@ from homeassistant.core import HomeAssistant
 
 from .coordinator import PVPCCoordinator
 
-
 type PVPCConfigEntry = ConfigEntry[PVPCCoordinator]
 
 

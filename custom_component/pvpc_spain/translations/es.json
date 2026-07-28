@@ -1,0 +1,25 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "PVPC España",
+        "description": "Configura la integración de precios PVPC",
+        "data": {
+          "zone": "Zona eléctrica",
+          "token": "Token de acceso"
+        },
+        "data_description": {
+          "zone": "Selecciona la zona eléctrica donde se encuentra tu suministro",
+          "token": "Introduce el token necesario para acceder a la API PVPC"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "No se ha podido conectar con la API PVPC",
+      "unknown": "Se ha producido un error inesperado"
+    },
+    "abort": {
+      "already_configured": "Esta zona ya está configurada"
+    }
+  }
+}

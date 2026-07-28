@@ -6,11 +6,12 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 from homeassistant.components.sensor import (
+    SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
     SensorStateClass,
 )
-
+from homeassistant.helpers.device_registry import DeviceEntryType
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -20,15 +21,14 @@ from . import PVPCConfigEntry
 from . import calculator
 from .const import DOMAIN
 from .coordinator import PVPCCoordinator
+from .models import PVPCResponse
 
 
 @dataclass(frozen=True, kw_only=True)
-class PVPCSensorDescription(
-    SensorEntityDescription
-):
+class PVPCSensorDescription(SensorEntityDescription):
     """Describe a PVPC sensor."""
 
-    value_fn: Callable[[Any], Any]
+    value_fn: Callable[[PVPCResponse], Any]
 
 
 SENSORS: tuple[PVPCSensorDescription, ...] = (
@@ -40,6 +40,7 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         value_fn=calculator.current_price,
         native_unit_of_measurement="€/kWh",
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
     ),
 
     PVPCSensorDescription(
@@ -49,6 +50,7 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         value_fn=calculator.next_price,
         native_unit_of_measurement="€/kWh",
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
     ),
 
     PVPCSensorDescription(
@@ -58,6 +60,7 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         value_fn=calculator.minimum_price,
         native_unit_of_measurement="€/kWh",
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
     ),
 
     PVPCSensorDescription(
@@ -67,6 +70,7 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         value_fn=calculator.maximum_price,
         native_unit_of_measurement="€/kWh",
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
     ),
 
     PVPCSensorDescription(
@@ -76,6 +80,7 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         value_fn=calculator.average_price,
         native_unit_of_measurement="€/kWh",
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
     ),
 
     PVPCSensorDescription(
@@ -99,6 +104,7 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         value_fn=calculator.remaining_average,
         native_unit_of_measurement="€/kWh",
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
     ),
 
     PVPCSensorDescription(
@@ -113,6 +119,14 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         name="Clasificación del precio",
         icon="mdi:information-outline",
         value_fn=calculator.price_class,
+        device_class=SensorDeviceClass.ENUM,
+        options=(
+            "Muy barato",
+            "Barato",
+            "Medio",
+            "Caro",
+            "Muy caro",
+        ),
     ),
 
     PVPCSensorDescription(
@@ -120,6 +134,14 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         name="Zona",
         icon="mdi:map-marker",
         value_fn=lambda data: data.today.zone.api_name,
+        device_class=SensorDeviceClass.ENUM,
+        options=(
+            "Península",
+            "Canarias",
+            "Baleares",
+            "Ceuta",
+            "Melilla",
+        ),
     ),
 
     PVPCSensorDescription(
@@ -127,6 +149,12 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         name="Tramo tarifario",
         icon="mdi:calendar-clock",
         value_fn=calculator.tariff_period,
+        device_class=SensorDeviceClass.ENUM,
+        options=(
+            "Valle",
+            "Llano",
+            "Punta",
+        ),
     ),
 
     PVPCSensorDescription(
@@ -142,6 +170,7 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         icon="mdi:percent",
         value_fn=calculator.difference_from_average,
         native_unit_of_measurement="%",
+        suggested_display_precision=1,
     ),
 
     PVPCSensorDescription(
@@ -150,6 +179,8 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         icon="mdi:arrow-down",
         value_fn=calculator.tomorrow_minimum,
         native_unit_of_measurement="€/kWh",
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
     ),
 
     PVPCSensorDescription(
@@ -158,6 +189,18 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         icon="mdi:arrow-up",
         value_fn=calculator.tomorrow_maximum,
         native_unit_of_measurement="€/kWh",
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
+    ),
+
+    PVPCSensorDescription(
+        key="today_prices",
+        name="Precio hoy",
+        icon="mdi:chart-line",
+        value_fn=calculator.today_current_price,
+        native_unit_of_measurement="€/kWh",
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
     ),
 
     PVPCSensorDescription(
@@ -166,6 +209,8 @@ SENSORS: tuple[PVPCSensorDescription, ...] = (
         icon="mdi:chart-line",
         value_fn=calculator.tomorrow_average,
         native_unit_of_measurement="€/kWh",
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=4,
     ),
 
     PVPCSensorDescription(
@@ -225,8 +270,11 @@ class PVPCSensor(
         self.entity_description = description
 
         self._attr_unique_id = (
-            f"{DOMAIN}_{description.key}"
+            f"{coordinator.config_entry.entry_id}_"
+            f"{description.key}"
         )
+
+        self._attr_has_entity_name = True
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -238,10 +286,12 @@ class PVPCSensor(
             },
             name="PVPC España",
             manufacturer="PVPC España",
+            model="Precio Voluntario para el Pequeño Consumidor",
+            entry_type=DeviceEntryType.SERVICE,
         )
 
     @property
-    def native_value(self):
+    def native_value(self) -> Any:
         """Return sensor value."""
 
         return self.entity_description.value_fn(
@@ -254,12 +304,16 @@ class PVPCSensor(
     ) -> dict[str, Any] | None:
         """Return extra state attributes."""
 
-        if (
-            self.entity_description.key
-            != "current_price"
-        ):
-            return None
+        if self.entity_description.key == "current_price":
+            return calculator.get_price_summary(
+                self.coordinator.data
+            )
 
-        return calculator.get_price_summary(
-            self.coordinator.data
-        )
+        if self.entity_description.key == "today_prices":
+            return {
+                "prices": calculator.get_today_prices(
+                    self.coordinator.data
+                )
+            }
+
+        return None

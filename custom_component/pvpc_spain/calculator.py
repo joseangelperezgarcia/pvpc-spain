@@ -89,6 +89,66 @@ def next_price(
 # Today statistics
 # -------------------------------------------------------------------
 
+def today_prices(data: PVPCResponse) -> float | None:
+    """Return current price for today."""
+
+    current = current_hour(data)
+
+    if current is None:
+        return None
+
+    return current.price
+
+def today_current_price(data: PVPCResponse) -> float | None:
+    """Return current hour price."""
+
+    now = dt_util.now()
+
+    for hour in data.today.hours:
+        if hour.start <= now < hour.end:
+            return hour.price
+
+    return None
+
+def get_today_prices(data: PVPCResponse) -> dict[str, dict[str, Any]]:
+    """Return today's prices with tariff period."""
+
+    prices = {}
+
+    for hour in data.today.hours:
+        time = hour.start.strftime("%H:%M")
+
+        prices[time] = {
+            "price": hour.price,
+            "period": tariff_period_for_hour(
+                hour.start
+            ),
+        }
+
+    return prices
+
+def tariff_period_for_hour(dt) -> str:
+    """Return PVPC 2.0TD period for a datetime."""
+
+    if dt.weekday() >= 5:
+        return "Valle"
+
+    if is_national_holiday(dt.date()):
+        return "Valle"
+
+    hour = dt.hour
+
+    if 0 <= hour < 8:
+        return "Valle"
+
+    if (
+        8 <= hour < 10
+        or 14 <= hour < 18
+        or 22 <= hour < 24
+    ):
+        return "Llano"
+
+    return "Punta"
 
 def minimum_price(
     data: PVPCResponse,

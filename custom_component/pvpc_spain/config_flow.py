@@ -123,4 +123,6 @@ class PVPCSpainConfigFlow(
                 }
             ),
             errors=errors,
+            description_placeholders={
+            "api_url": "https://api.esios.ree.es/"},
         )

@@ -164,6 +164,122 @@ La integración calcula automáticamente el periodo horario 2.0TD:
 - 18:00 - 22:00
 
 ---
+# Apex Chart disponible
+
+type: custom:apexcharts-card
+header:
+  show: true
+  title: PVPC hoy
+  show_states: false
+  colorize_states: true
+graph_span: 24h
+span:
+  start: day
+yaxis:
+  - min: 0
+    decimals: 3
+    apex_config:
+      title:
+        text: €/kWh
+      labels:
+        formatter: |
+          EVAL:function(value) {
+            return value.toFixed(3);
+          }
+now:
+  show: true
+  label: Hora actual
+series:
+  - entity: sensor.pvpc_espana_precio_hoy
+    name: Valle
+    float_precision: 3
+    type: column
+    color: "#4CAF50"
+    data_generator: |
+      const prices = entity.attributes.prices;
+
+      return Object.entries(prices)
+        .filter(([_, data]) => data.period === "Valle")
+        .map(([time, data]) => {
+          const [hour, minute] = time.split(":");
+
+          return [
+            new Date(
+              new Date().setHours(
+                Number(hour),
+                Number(minute),
+                0,
+                0
+              )
+            ).getTime(),
+            data.price
+          ];
+        });
+  - entity: sensor.pvpc_espana_precio_hoy
+    name: Llano
+    type: column
+    float_precision: 3
+    color: "#FFC107"
+    data_generator: |
+      const prices = entity.attributes.prices;
+
+      return Object.entries(prices)
+        .filter(([_, data]) => data.period === "Llano")
+        .map(([time, data]) => {
+          const [hour, minute] = time.split(":");
+
+          return [
+            new Date(
+              new Date().setHours(
+                Number(hour),
+                Number(minute),
+                0,
+                0
+              )
+            ).getTime(),
+            data.price
+          ];
+        });
+  - entity: sensor.pvpc_espana_precio_hoy
+    name: Punta
+    type: column
+    float_precision: 3
+    color: "#F44336"
+    data_generator: |
+      const prices = entity.attributes.prices;
+
+      return Object.entries(prices)
+        .filter(([_, data]) => data.period === "Punta")
+        .map(([time, data]) => {
+          const [hour, minute] = time.split(":");
+
+          return [
+            new Date(
+              new Date().setHours(
+                Number(hour),
+                Number(minute),
+                0,
+                0
+              )
+            ).getTime(),
+            data.price
+          ];
+        });
+apex_config:
+  plotOptions:
+    bar:
+      columnWidth: 100%
+  dataLabels:
+    enabled: false
+  tooltip:
+    "y":
+      formatter: |
+        EVAL:function(value) {
+          return Number(value).toFixed(3) + " €/kWh";
+        }
+
+<img width="380" height="282" alt="image" src="https://github.com/user-attachments/assets/afb1ab27-66be-4e6b-a15e-079cb06f9f97" />
+
 
 # Automatizaciones de ejemplo
 

@@ -13,6 +13,9 @@
   "loggers": [
     "custom_components.pvpc_spain"
   ],
+  "images": [
+    "icon.png"
+  ],
   "requirements": [
     "holidays>=0.40"
   ],

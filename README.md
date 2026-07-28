@@ -166,6 +166,7 @@ La integración calcula automáticamente el periodo horario 2.0TD:
 ---
 # Apex Chart disponible
 
+```yaml
 type: custom:apexcharts-card
 header:
   show: true
@@ -277,7 +278,7 @@ apex_config:
         EVAL:function(value) {
           return Number(value).toFixed(3) + " €/kWh";
         }
-
+```
 <img width="380" height="282" alt="image" src="https://github.com/user-attachments/assets/afb1ab27-66be-4e6b-a15e-079cb06f9f97" />
 
 

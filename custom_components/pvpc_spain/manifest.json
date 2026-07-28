@@ -2,10 +2,10 @@
   "domain": "pvpc_spain",
   "name": "PVPC España",
   "version": "1.0.0",
-  "documentation": "https://github.com/joangpega/pvpc_spain",
-  "issue_tracker": "https://github.com/joangpega/pvpc_spain/issues",
+  "documentation": "https://github.com/joseangelperezgarcia/pvpc_spain",
+  "issue_tracker": "https://github.com/joseangelperezgarcia/pvpc_spain/issues",
   "codeowners": [
-    "@joangpega"
+    "@joseangelperezgarcia"
   ],
   "config_flow": true,
   "integration_type": "service",

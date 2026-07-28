@@ -1,5 +1,7 @@
 # PVPC España 🇪🇸⚡
 
+<img width="256" height="256" alt="icon" src="https://github.com/user-attachments/assets/c728e888-2aba-4cb9-b1e9-698d4593865b" />
+
 Integración personalizada para **Home Assistant** que permite consultar los precios horarios de la tarifa regulada **PVPC (Precio Voluntario para el Pequeño Consumidor)** en España mediante la API de ESIOS (Red Eléctrica).
 
 La integración proporciona sensores con información del precio actual, evolución diaria, horas más económicas y clasificación del coste energético.

@@ -6,6 +6,8 @@ Integración personalizada para **Home Assistant** que permite consultar los pre
 
 La integración proporciona sensores con información del precio actual, evolución diaria, horas más económicas y clasificación del coste energético.
 
+[![Open your Home Assistant instance and open a repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=joseangelperezgarcia&repository=pvpc-spain&category=integration)
+
 ---
 
 ## ✨ Características
